@@ -26,12 +26,12 @@ function App() {
 
       //Handle Response
       if (response.data.error) {
-        // Scenario: Compilation Error
+        //Compilation Error
         setError(true);
         setOutput(response.data.stderr);
         setAiAnalysis(response.data.aiFix); // AI's suggestion
       } else {
-        // Scenario: Success
+        //Success
         setError(false);
         setOutput(response.data.stdout);
       }
@@ -49,7 +49,7 @@ function App() {
     <div className="app-container">
       {/* Header Bar */}
       <header className="header">
-        <h2>AI Self-Healing Compiler</h2>
+        <h2>Compiler</h2>
         <div className="controls">
           <select
             className="lang-select"
@@ -77,7 +77,7 @@ function App() {
             value={code}
             onChange={(val) => setCode(val)}
             options={{
-              fontSize: 14,
+              fontSize: 17,
               minimap: { enabled: false },
               automaticLayout: true,
             }}
