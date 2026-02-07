@@ -1,0 +1,192 @@
+/* 1. Global Reset & Fonts */
+:root {
+  --bg-dark: #1e1e1e;
+  /* VS Code Main Background */
+  --bg-panel: #252526;
+  /* Side Panel Background */
+  --bg-header: #333333;
+  /* Header Background */
+  --accent-blue: #007acc;
+  /* VS Code Blue */
+  --text-primary: #cccccc;
+  /* Main Text */
+  --text-green: #4ec9b0;
+  /* Success/Terminal Text */
+  --text-error: #f44336;
+  /* Error Red */
+  --border-color: #444444;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Consolas', 'Courier New', monospace;
+  /* Coding font */
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  box-sizing: border-box;
+}
+
+/* 2. Main Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* 3. Header Styling */
+.header {
+  height: 50px;
+  background-color: var(--bg-header);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* 4. Control Bar (Select & Button) */
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.lang-select {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.run-btn {
+  background-color: var(--accent-blue);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.run-btn:hover {
+  background-color: #005f9e;
+}
+
+.run-btn:disabled {
+  background-color: #444;
+  cursor: not-allowed;
+}
+
+/* 5. Main Workspace (Split View) */
+.workspace {
+  display: flex;
+  flex: 1;
+  /* Takes remaining height */
+  height: calc(100vh - 50px);
+}
+
+.editor-panel {
+  flex: 1;
+  border-right: 1px solid var(--border-color);
+}
+
+.output-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-dark);
+  padding: 0;
+  overflow-y: auto;
+}
+
+/* 6. Terminal Window */
+.terminal-window {
+  background-color: #121212;
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color);
+  min-height: 200px;
+  overflow-x: auto;
+}
+
+.terminal-title {
+  color: #888;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.terminal-content {
+  color: var(--text-green);
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.error-text {
+  color: var(--text-error);
+}
+
+/* 7. AI Fix Box */
+.ai-panel {
+  padding: 20px;
+  background-color: #1e293b;
+  /* Dark Blue-ish tint */
+  border-left: 4px solid var(--accent-blue);
+  margin: 10px;
+  border-radius: 4px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.ai-title {
+  color: #60a5fa;
+  /* Light Blue */
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-explanation {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #e2e8f0;
+}
+
+.code-block {
+  background-color: #0f172a;
+  /* Darker Slate */
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  color: #a5f3fc;
+  font-family: 'Consolas', monospace;
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
