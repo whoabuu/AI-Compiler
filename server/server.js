@@ -10,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 const genAi = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -59,7 +59,7 @@ async function getAiFix(code, language, errorMsg){
     }
 
     try {
-        const model = genAi.getGenerativeModel({model: 'gemini-pro'});
+        const model = genAi.getGenerativeModel({ model: "gemini-flash-latest"});
 
         const prompt = `You are an expert programmer. The user wrote this ${language} code, but it failed.
         
