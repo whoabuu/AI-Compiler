@@ -12,6 +12,9 @@ function App() {
   const [error, setError] = useState(false); 
 
   const runCode = async () => {
+    
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     setLoading(true);
     setAiAnalysis(null);
     setOutput("");
@@ -19,7 +22,7 @@ function App() {
 
     try {
       //Send code to Backend
-      const response = await axios.post("http://localhost:5000/api/compile", {
+      const response = await axios.post(`${backendUrl}/api/compile`, {
         code,
         language,
       });
