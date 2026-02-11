@@ -1,19 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
+import { LANGUAGE_VERSIONS, CODE_SNIPPETS } from "./constants"; 
 import "./App.css";
 
 function App() {
-  const [code, setCode] = useState("// Write your code here...");
-  const [language, setLanguage] = useState("python");
+  const [language, setLanguage] = useState("javascript");
+  const [code, setCode] = useState(CODE_SNIPPETS["javascript"]); 
   const [output, setOutput] = useState("");
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false); 
+  const [error, setError] = useState(false);
+
+  // Function to handle language change
+  const onSelectChange = (lang) => {
+    setLanguage(lang);
+    setCode(CODE_SNIPPETS[lang]); 
+    setOutput(""); 
+    setAiAnalysis(null); 
+  };
 
   const runCode = async () => {
-    
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+    if (!backendUrl) {
+      setError(true);
+      setOutput("Error: Backend URL is not set in .env file.");
+      return;
+    }
 
     setLoading(true);
     setAiAnalysis(null);
@@ -21,27 +35,27 @@ function App() {
     setError(false);
 
     try {
-      //Send code to Backend
       const response = await axios.post(`${backendUrl}/api/compile`, {
         code,
         language,
       });
 
-      //Handle Response
+      const { run, aiFix } = response.data;
+
       if (response.data.error) {
-        //Compilation Error
         setError(true);
-        setOutput(response.data.stderr);
-        setAiAnalysis(response.data.aiFix); // AI's suggestion
+        setOutput(response.data.stderr || response.data.stdout);
+        setAiAnalysis(response.data.aiFix); 
       } else {
-        //Success
+        // Success
         setError(false);
         setOutput(response.data.stdout);
       }
     } catch (err) {
+      console.error(err);
       setError(true);
       setOutput(
-        "Error: Could not connect to the backend server. Is it running?"
+        stderrr.response?.data?.error || "An error occurred while communicating with the server."
       );
     } finally {
       setLoading(false);
@@ -54,17 +68,25 @@ function App() {
       <header className="header">
         <h2>Compiler</h2>
         <div className="controls">
-          <select
-            className="lang-select"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
+          <div className="language-selector">
+            <select
+              className="lang-select"
+              value={language}
+              onChange={(e) => onSelectChange(e.target.value)}
+            >
+              {Object.entries(LANGUAGE_VERSIONS).map(([lang]) => (
+                <option key={lang} value={lang}>
+                  {lang.toUpperCase()}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            className={`run-btn ${loading ? "loading" : ""}`}
+            onClick={runCode}
+            disabled={loading}
           >
-            <option value="python">Python</option>
-            <option value="javascript">JavaScript</option>
-            <option value="cpp">C++</option>
-          </select>
-          <button className="run-btn" onClick={runCode} disabled={loading}>
-            {loading ? "Processing..." : "Run & Debug"}
+            {loading ? "Compiling..." : "Run & Debug"}
           </button>
         </div>
       </header>
@@ -76,13 +98,14 @@ function App() {
           <Editor
             height="100%"
             theme="vs-dark"
-            language={language}
+            language={language === "cpp" || language === "c" ? "cpp" : language} // Monaco uses 'cpp' for both C and C++
             value={code}
             onChange={(val) => setCode(val)}
             options={{
-              fontSize: 17,
+              fontSize: 18,
               minimap: { enabled: false },
               automaticLayout: true,
+              scrollBeyondLastLine: false,
             }}
           />
         </div>
@@ -97,14 +120,25 @@ function App() {
             </pre>
           </div>
 
-          {/* AI Debugger Panel (Only shows on error) */}
+          {/* AI Debugger Panel*/}
           {aiAnalysis && (
             <div className="ai-panel">
-              <h3 className="ai-title">🤖 AI Debugger Analysis</h3>
+              <h3 className="ai-title">AI Debugger Analysis</h3>
               <p className="ai-explanation">
                 <strong>Issue:</strong> {aiAnalysis.explanation}
               </p>
-              <div className="code-block">{aiAnalysis.correctedCode}</div>
+              <div className="code-block">
+                <pre>{aiAnalysis.correctedCode}</pre>
+                <button
+                  className="copy-btn"
+                  onClick={() => {
+                    navigator.clipboard.writeText(aiAnalysis.correctedCode);
+                    alert("Code copied to clipboard!");
+                  }}
+                >
+                  Copy Fix
+                </button>
+              </div>
             </div>
           )}
         </div>
